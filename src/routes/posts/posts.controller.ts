@@ -4,6 +4,7 @@ import { PostsService } from './posts.service'
 // import { APIKeyGuard } from 'src/shared/guards/api-key.guard'
 import { Auth } from 'src/shared/decorators/auth.decorator'
 import { AuthType, ConditionGuard } from 'src/shared/constants/auth.contants'
+import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
 // import { AuthenticationGuard } from 'src/shared/guards/authentication.guard'
 
 @Controller('posts')
@@ -19,9 +20,10 @@ export class PostsController {
     return this.postServices.getPosts()
   }
 
+  @Auth([AuthType.Bearer])
   @Post()
-  createPost(@Body() body: any) {
-    return this.postServices.createPost(body)
+  createPost(@Body() body: any, @ActiveUser('userId') userId: number) {
+    return this.postServices.createPost(body, userId)
   }
 
   @Get(':id')

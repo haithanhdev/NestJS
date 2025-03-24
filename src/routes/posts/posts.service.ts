@@ -10,8 +10,7 @@ export class PostsService {
   getPost(id: string) {
     return `Post ${id}`
   }
-  createPost(body: any) {
-    const userId = 1
+  createPost(body: any, userId: number) {
     return this.prismaService.post.create({
       data: {
         title: body.title,

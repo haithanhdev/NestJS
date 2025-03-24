@@ -23,10 +23,10 @@ export class AuthenticationGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]) ?? { authTypes: [AuthType.None], options: { condition: ConditionGuard.And } }
-    console.log('authTypeValue', authTypeValue)
-    console.log('authTypeGuardMap', this.authTypeGuardMap)
+    // console.log('authTypeValue', authTypeValue)
+    // console.log('authTypeGuardMap', this.authTypeGuardMap)
     const guards = authTypeValue.authTypes.map((authType) => this.authTypeGuardMap[authType])
-    console.log('guards', guards)
+    // console.log('guards', guards)
     let error = new UnauthorizedException()
     if (authTypeValue.options.condition === ConditionGuard.Or) {
       for (const instance of guards) {
