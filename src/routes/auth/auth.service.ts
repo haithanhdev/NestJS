@@ -21,7 +21,7 @@ export class AuthService {
       })
       return user
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Email already exists')
       }
