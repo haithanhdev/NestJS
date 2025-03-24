@@ -27,7 +27,7 @@ class ConfigSchema {
   @IsString()
   REFRESH_TOKEN_EXPIRES_IN: string
 }
-console.log(process.env)
+// console.log(process.env)
 const configServer = plainToInstance(ConfigSchema, process.env, {
   enableImplicitConversion: true,
 })

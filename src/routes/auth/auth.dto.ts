@@ -1,4 +1,4 @@
-import { Exclude, Expose, Type } from 'class-transformer'
+import { Exclude, Type } from 'class-transformer'
 import { IsString } from 'class-validator'
 import { SuccessResDTO } from 'src/shared/shared.dto'
 
@@ -41,6 +41,14 @@ export class RegisterResDTO extends SuccessResDTO {
   data: RegisterData
   constructor(partial: Partial<RegisterResDTO>) {
     super(partial)
+    Object.assign(this, partial)
+  }
+}
+
+export class LoginResDTO {
+  accessToken: string
+  refreshToken: string
+  constructor(partial: Partial<LoginResDTO>) {
     Object.assign(this, partial)
   }
 }
