@@ -1,5 +1,6 @@
-import { Exclude, Expose } from 'class-transformer'
+import { Exclude, Expose, Type } from 'class-transformer'
 import { IsString } from 'class-validator'
+import { SuccessResDTO } from 'src/shared/shared.dto'
 
 export class LoginBodyDTO {
   //   @IsString({ message: 'Tên phải là chuỗi' }) //Customize message
@@ -16,7 +17,7 @@ export class RegisterBodyDTO extends LoginBodyDTO {
   confirmPassword: string
 }
 
-export class RegisterResDTO {
+class RegisterData {
   id: number
   email: string
   name: string
@@ -30,7 +31,16 @@ export class RegisterResDTO {
   //   return `${this.email} - ${this.name}`
   // }
 
+  constructor(partial: Partial<RegisterData>) {
+    Object.assign(this, partial)
+  }
+}
+
+export class RegisterResDTO extends SuccessResDTO {
+  @Type(() => RegisterData)
+  data: RegisterData
   constructor(partial: Partial<RegisterResDTO>) {
+    super(partial)
     Object.assign(this, partial)
   }
 }

@@ -8,7 +8,9 @@ export class AuthController {
   // @UseInterceptors(ClassSerializerInterceptor) //Không cần nữa vì đã áp dụng interceptor cho global rồi
   @SerializeOptions({ type: RegisterResDTO })
   @Post('register')
-  register(@Body() body: RegisterBodyDTO) {
-    return this.authService.register(body)
+  async register(@Body() body: RegisterBodyDTO) {
+    console.log(`Registering...`)
+    // return new RegisterResDTO(await this.authService.register(body))
+    return await this.authService.register(body)
   }
 }
