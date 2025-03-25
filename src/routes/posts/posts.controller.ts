@@ -1,21 +1,15 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { PostsService } from './posts.service'
-// import { AccessTokenGuard } from 'src/shared/guards/access-token.guard'
-// import { APIKeyGuard } from 'src/shared/guards/api-key.guard'
 import { Auth } from 'src/shared/decorators/auth.decorator'
 import { AuthType, ConditionGuard } from 'src/shared/constants/auth.contants'
 import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
-import { GetPostItemDTO } from 'src/routes/posts/post.dto'
-// import { AuthenticationGuard } from 'src/shared/guards/authentication.guard'
+import { CreatePostBodyDTO, GetPostItemDTO, UpdatePostBodyDTO } from 'src/routes/posts/post.dto'
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postServices: PostsService) {}
 
-  // @UseGuards(AccessTokenGuard)
-  // @UseGuards(APIKeyGuard)
   @Auth([AuthType.Bearer, AuthType.APIKey], { condition: ConditionGuard.Or })
-  // @UseGuards(AuthenticationGuard) //Khai báo global rồi nên route nào cũng có
   @Get()
   getPosts(@ActiveUser('userId') userId: number) {
     return this.postServices.getPosts(userId).then((posts) => posts.map((post) => new GetPostItemDTO(post)))
@@ -23,22 +17,27 @@ export class PostsController {
 
   @Auth([AuthType.Bearer])
   @Post()
-  createPost(@Body() body: any, @ActiveUser('userId') userId: number) {
-    return this.postServices.createPost(body, userId)
+  async createPost(@Body() body: CreatePostBodyDTO, @ActiveUser('userId') userId: number) {
+    return new GetPostItemDTO(await this.postServices.createPost(body, userId))
   }
 
   @Get(':id')
-  getPost(@Param('id') id: string) {
-    return this.postServices.getPost(id)
+  async getPost(@Param('id') id: string) {
+    const postId = Number(id)
+    return new GetPostItemDTO(await this.postServices.getPost(postId))
   }
 
   @Put(':id')
-  updatePost(@Param('id') id: string, @Body() body: any) {
-    return this.postServices.updatePost(id, body)
+  @Auth([AuthType.Bearer])
+  async updatePost(@Param('id') id: string, @Body() body: UpdatePostBodyDTO, @ActiveUser('userId') userId: number) {
+    const postId = Number(id)
+    return new GetPostItemDTO(await this.postServices.updatePost({ postId, body, userId }))
   }
 
+  @Auth([AuthType.Bearer])
   @Delete(':id')
-  deletePost(@Param('id') id: string) {
-    return this.postServices.deletePost(id)
+  deletePost(@Param('id') id: string, @ActiveUser('userId') userId: number): Promise<boolean> {
+    const postId = Number(id)
+    return this.postServices.deletePost(postId, userId)
   }
 }
