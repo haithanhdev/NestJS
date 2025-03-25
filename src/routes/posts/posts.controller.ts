@@ -5,6 +5,7 @@ import { PostsService } from './posts.service'
 import { Auth } from 'src/shared/decorators/auth.decorator'
 import { AuthType, ConditionGuard } from 'src/shared/constants/auth.contants'
 import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
+import { GetPostItemDTO } from 'src/routes/posts/post.dto'
 // import { AuthenticationGuard } from 'src/shared/guards/authentication.guard'
 
 @Controller('posts')
@@ -16,8 +17,8 @@ export class PostsController {
   @Auth([AuthType.Bearer, AuthType.APIKey], { condition: ConditionGuard.Or })
   // @UseGuards(AuthenticationGuard) //Khai báo global rồi nên route nào cũng có
   @Get()
-  getPosts() {
-    return this.postServices.getPosts()
+  getPosts(@ActiveUser('userId') userId: number) {
+    return this.postServices.getPosts(userId).then((posts) => posts.map((post) => new GetPostItemDTO(post)))
   }
 
   @Auth([AuthType.Bearer])
